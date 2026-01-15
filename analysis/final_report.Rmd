@@ -1,0 +1,103 @@
+---
+title: "Analysis of SARS-CoV-2 concentration in wastewater"
+author: "Jitong"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+params:
+  state: "nc"
+  download_raw_data: FALSE
+hitheme: tomorrow
+highlighter: highlight.js
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+
+knitr::opts_chunk$set(echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 9,
+  fig.height = 6,
+  fig.path = "../results/"
+)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
+
+## Overview
+
+
+This file produces a report of the wastewater concentration of SARS-CoV-2 in different counties in Georgia.
+
+## Download data
+
+
+```{r}
+if(!file.exists((here::here("data", "raw.RData")))){
+  source(here("source", "01_data_download.R"))
+}else(
+  load(here::here("data", "raw.RData"))
+)
+```
+
+
+
+## Clean data 
+
+
+
+```{r}
+if(!file.exists((here::here("data", "clean.Rdata")))){
+  source(here("source", "02_data_cleaning.R")) 
+}else(
+  load(here::here("data", "clean.Rdata"))
+)
+```
+
+
+## Analyze data
+
+
+
+```{r}
+source(here("source", "03_data_analysis.R"))
+
+```
+
+```{r}
+covid_table %>%
+  knitr::kable()
+```
+There are 14 counties in the GA. Muscogee,Chattahoochee having the smallest median concentration of 2.751000e-04 with 278000 population served, and Forsyth has the largest median concentration of 3.142004e+07 with 36500 population served.
+
+
+
+
+# Visualize data
+
+
+
+```{r}
+source(here("source", "04_data_visualization.R"))
+```
+
+
+```{r, figure1}
+plot1
+```
+
+Muscogee,Chattahoochee and Fulton has relative quite low concentration compare with other 12 counties in GA. Peach has the biggest variance compare with other counties. Fulton and Floyd have more outliers than others.
+
+
+```{r, figure2, fig.height = 10}
+plot2
+```
+
+
+This plot displays wastewater concentration levels across 14 different counties in GA over a specific time period. Each individual panel represents a county, while the colored lines track data from specific wastewater treatment plants. Some counties have several wastewater treatment plants. The overall trends shows sharp spikes and waves, likely corresponding to viral surges or outbreaks. However, there is no similar general trend accross all counties.
